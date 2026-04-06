@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&MOSS — 26AW Lookbook</title>
+<link rel="icon" type="image/png" href="logo2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #fff;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+  }
+
+  .logo-img {
+    height: 34px;
+    display: block;
+    object-fit: contain;
+  }
+
+  .header-meta {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #999;
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── Grid ── */
+  .grid-wrap {
+    padding: 2px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+
+  .item {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: #f0f0f0;
+    aspect-ratio: 3 / 4;
+  }
+
+  .item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .item img.visible {
+    opacity: 1;
+  }
+
+  .item:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Hover overlay */
+  .item-hover {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+  }
+
+  .item:hover .item-hover {
+    background: rgba(0, 0, 0, 0.22);
+  }
+
+  .item-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .item:hover .item-label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: #0f0f0f;
+    padding: 28px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+  .footer-logo-img {
+    height: 18px;
+    display: block;
+    object-fit: contain;
+  }
+
+  .footer-note {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+  }
+
+  /* ── Lightbox ── */
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .lb.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lb-image-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 60px 80px;
+  }
+
+  .lb-img {
+    max-height: 88vh;
+    max-width: 80vw;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    transition: opacity 0.2s ease;
+    border: none;
+  }
+
+  .lb-img.fading { opacity: 0; }
+
+  /* Controls */
+  .lb-close {
+    position: fixed;
+    top: 24px; right: 32px;
+    background: none; border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    transition: color 0.2s;
+    font-weight: 300;
+    padding: 8px;
+  }
+  .lb-close:hover { color: #fff; }
+
+  .lb-nav {
+    position: fixed;
+    top: 50%; transform: translateY(-50%);
+    background: none; border: none;
+    color: rgba(255,255,255,0.4);
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    padding: 20px 28px;
+    transition: color 0.2s;
+  }
+  .lb-nav:hover { color: #fff; }
+  .lb-nav.prev { left: 0; }
+  .lb-nav.next { right: 0; }
+
+  .lb-info {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lb-brand img {
+    height: 16px;
+    display: block;
+    opacity: 0.3;
+  }
+
+  .lb-count {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+  }
+
+  .lb-count span { color: rgba(255,255,255,0.7); }
+
+  /* ── Responsive ── */
+  @media (max-width: 1024px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 1px; }
+    .grid-wrap { padding: 1px; }
+    header { padding: 16px 20px; }
+    .logo { font-size: 22px; }
+    footer { padding: 20px; }
+    .lb-image-wrap { padding: 40px 16px; }
+    .lb-img { max-width: 95vw; }
+    .lb-nav { padding: 16px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo1.png" alt="&MOSS" class="logo-img">
+  <div class="header-meta">
+    26 Autumn / Winter<br>Lookbook
+  </div>
+</header>
+
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>
+  <img src="logo3.svg" alt="&MOSS" class="footer-logo-img">
+  <div class="footer-note">26 A/W — All Rights Reserved</div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lb" id="lb">
+  <button class="lb-close" id="lbClose">&#215;</button>
+  <button class="lb-nav prev" id="lbPrev">&#8592;</button>
+  <div class="lb-image-wrap">
+    <img class="lb-img" id="lbImg" alt="">
+  </div>
+  <button class="lb-nav next" id="lbNext">&#8594;</button>
+  <div class="lb-info">
+    <div class="lb-brand"><img src="logo3.svg" alt="&MOSS"></div>
+    <div class="lb-count">Look <span id="lbCurrent">01</span> / 30</div>
+  </div>
+</div>
+
+<script>
+const images = [
+  "26_3_30&MOSS104871.jpg",
+  "26_3_30&MOSS104875.jpg",
+  "26_3_30&MOSS104957.jpg",
+  "26_3_30&MOSS104967.jpg",
+  "26_3_30&MOSS105124.jpg",
+  "26_3_30&MOSS105176.jpg",
+  "26_3_30&MOSS105224.jpg",
+  "26_3_30&MOSS105374.jpg",
+  "26_3_30&MOSS105472.jpg",
+  "26_3_30&MOSS105546.jpg",
+  "26_3_30&MOSS105709.jpg",
+  "26_3_30&MOSS105776.jpg",
+  "26_3_30&MOSS105887.jpg",
+  "26_3_30&MOSS106120.jpg",
+  "26_3_30&MOSS106186.jpg",
+  "26_3_30&MOSS106257.jpg",
+  "26_3_30&MOSS106280.jpg",
+  "26_3_30&MOSS106319.jpg",
+  "26_3_30&MOSS106330.jpg",
+  "26_3_30&MOSS106504.jpg",
+  "26_3_30&MOSS106578.jpg",
+  "26_3_30&MOSS106622.jpg",
+  "26_3_30&MOSS106762.jpg",
+  "26_3_30&MOSS106835.jpg",
+  "26_3_30&MOSS107050.jpg",
+  "26_3_30&MOSS107066.jpg",
+  "26_3_30&MOSS107129.jpg",
+  "26_3_30&MOSS107175.jpg",
+  "26_3_30&MOSS107230.jpg",
+  "26_3_30&MOSS107304.jpg"
+];
+
+let lbIndex = 0;
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+const lbCurrent = document.getElementById('lbCurrent');
+
+// Build grid with lazy loading via IntersectionObserver
+const grid = document.getElementById('grid');
+const imgObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      img.src = img.dataset.src;
+      img.onload = () => img.classList.add('visible');
+      imgObserver.unobserve(img);
+    }
+  });
+}, { rootMargin: '200px' });
+
+images.forEach((name, i) => {
+  const item = document.createElement('div');
+  item.className = 'item';
+
+  const img = document.createElement('img');
+  img.dataset.src = `thumbs/${name}`;
+  img.alt = `Look ${String(i+1).padStart(2,'0')}`;
+  // First 8 images load immediately
+  if (i < 8) {
+    img.src = `thumbs/${name}`;
+    img.onload = () => img.classList.add('visible');
+  } else {
+    imgObserver.observe(img);
+  }
+
+  const hover = document.createElement('div');
+  hover.className = 'item-hover';
+  hover.innerHTML = `<span class="item-label">Look ${String(i+1).padStart(2,'0')}</span>`;
+
+  item.appendChild(img);
+  item.appendChild(hover);
+  item.addEventListener('click', () => openLb(i));
+  grid.appendChild(item);
+});
+
+// Lightbox
+function openLb(index) {
+  lbIndex = index;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setLbImg(index, false);
+}
+
+function closeLb() {
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setLbImg(index, fade = true) {
+  if (fade) lbImg.classList.add('fading');
+  const load = () => {
+    lbImg.src = `large/${images[index]}`;
+    lbCurrent.textContent = String(index + 1).padStart(2, '0');
+    lbImg.onload = () => lbImg.classList.remove('fading');
+  };
+  if (fade) setTimeout(load, 180); else load();
+  // Preload neighbors
+  if (index + 1 < images.length) { const p = new Image(); p.src = `large/${images[index+1]}`; }
+  if (index - 1 >= 0) { const p = new Image(); p.src = `large/${images[index-1]}`; }
+}
+
+function lbPrev() { if (lbIndex > 0) { lbIndex--; setLbImg(lbIndex); } }
+function lbNext() { if (lbIndex < images.length - 1) { lbIndex++; setLbImg(lbIndex); } }
+
+document.getElementById('lbClose').addEventListener('click', closeLb);
+document.getElementById('lbPrev').addEventListener('click', lbPrev);
+document.getElementById('lbNext').addEventListener('click', lbNext);
+
+// Close on backdrop click
+lb.addEventListener('click', e => {
+  if (e.target === lb || e.target.classList.contains('lb-image-wrap')) closeLb();
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') lbPrev();
+  if (e.key === 'ArrowRight') lbNext();
+});
+
+// Touch swipe
+let touchX = 0;
+lb.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+lb.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 40) { if (dx < 0) lbNext(); else lbPrev(); }
+}, { passive: true });
+</script>
+</body>
+</html>
