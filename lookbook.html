@@ -113,6 +113,33 @@
     transform: translateY(0);
   }
 
+  /* ── Video Section ── */
+  .video-section {
+    margin-top: 2px;
+    background: #0f0f0f;
+    position: relative;
+  }
+
+  .video-section video {
+    width: 100%;
+    display: block;
+  }
+
+  .video-label {
+    position: absolute;
+    top: 24px;
+    left: 40px;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    font-family: 'Inter', sans-serif;
+  }
+
+  @media (max-width: 640px) {
+    .video-label { left: 20px; top: 16px; }
+  }
+
   /* ── Footer ── */
   footer {
     background: #0f0f0f;
@@ -120,7 +147,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 2px;
+    border-top: 1px solid rgba(255,255,255,0.06);
   }
 
   .footer-logo-img {
@@ -262,6 +289,13 @@
 <div class="grid-wrap">
   <div class="grid" id="grid"></div>
 </div>
+
+<section class="video-section">
+  <span class="video-label">26 A/W — Film</span>
+  <video controls playsinline preload="metadata">
+    <source src="and moss draft.mp4" type="video/mp4">
+  </video>
+</section>
 
 <footer>
   <img src="logo3.svg" alt="&MOSS" class="footer-logo-img">
